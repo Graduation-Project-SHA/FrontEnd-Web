@@ -19,6 +19,7 @@ export default function Roles() {
     const [roles, setRoles] = useState<Role[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [deletingRoleId, setDeletingRoleId] = useState<number | null>(null)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -56,6 +57,32 @@ export default function Roles() {
             7: 'جميع الصلاحيات'
         }
         return levels[level] || `المستوى ${level}`
+    }
+
+    const handleDeleteRole = async (roleId: number, roleName: string) => {
+        const confirmed = window.confirm(`هل أنت متأكد من حذف الدور "${roleName}"؟\nهذا الإجراء لا يمكن التراجع عنه.`)
+
+        if (!confirmed) return
+
+        setDeletingRoleId(roleId)
+        try {
+            await axios.delete(`${config.apiBaseUrl}/admin/roles/${roleId}`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                }
+            })
+
+            // Remove the role from the state
+            setRoles(roles.filter(role => role.id !== roleId))
+
+            // Optional: Show success message
+            alert('تم حذف الدور بنجاح')
+        } catch (err: any) {
+            console.error('Error deleting role:', err)
+            alert(err.response?.data?.message || 'فشل في حذف الدور')
+        } finally {
+            setDeletingRoleId(null)
+        }
     }
 
     if (isLoading) {
@@ -100,33 +127,58 @@ export default function Roles() {
 
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 {roles.map((role) => (
-                    <div key={role.id} className='bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow'>
-                        <div className='mb-4'>
-                            <h2 className='text-2xl font-bold text-[#0067FF] mb-1'>{role.name}</h2>
-                            <p className='text-sm text-gray-500'>معرف الدور: {role.id}</p>
-                        </div>
-
+                    <div key={role.id} className='bg-white flex flex-col justify-between rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow'>
                         <div>
-                            <h3 className='text-lg font-semibold mb-3 text-gray-700'>الصلاحيات:</h3>
-                            <div className='space-y-3'>
-                                {role.permissions.map((permission) => (
-                                    <div key={permission.permissionId} className='bg-gray-50 rounded-lg p-3 border border-gray-200'>
-                                        <div className='flex justify-between items-start mb-1'>
-                                            <span className='font-semibold text-gray-800'>{permission.resource}</span>
-                                            <span className='text-xs bg-[#0067FF] text-white px-2 py-1 rounded-full'>
-                                                {permission.accessLevel}
-                                            </span>
+
+                            <div className='mb-4'>
+                                <h2 className='text-2xl font-bold text-[#0067FF] mb-1'>{role.name}</h2>
+                                <p className='text-sm text-gray-500'>معرف الدور: {role.id}</p>
+                            </div>
+
+                            <div>
+                                <h3 className='text-lg font-semibold mb-3 text-gray-700'>الصلاحيات:</h3>
+                                <div className='space-y-3'>
+                                    {role.permissions.map((permission) => (
+                                        <div key={permission.permissionId} className='bg-gray-50 rounded-lg p-3 border border-gray-200'>
+                                            <div className='flex justify-between items-start mb-1'>
+                                                <span className='font-semibold text-gray-800'>{permission.resource}</span>
+                                                <span className='text-xs bg-[#0067FF] text-white px-2 py-1 rounded-full'>
+                                                    {permission.accessLevel}
+                                                </span>
+                                            </div>
+                                            <p className='text-sm text-gray-600'>{getAccessLevelText(permission.accessLevel)}</p>
                                         </div>
-                                        <p className='text-sm text-gray-600'>{getAccessLevelText(permission.accessLevel)}</p>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
-                        <div className='mt-4 pt-4 border-t border-gray-200'>
+                        <div className='mt-4 pt-4 border-t border-gray-200 flex justify-between items-center'>
                             <p className='text-sm text-gray-500'>
                                 عدد الصلاحيات: {role.permissions.length}
                             </p>
+                            <button
+                                onClick={() => handleDeleteRole(role.id, role.name)}
+                                disabled={deletingRoleId === role.id}
+                                className='text-red-600 hover:text-red-800 font-semibold text-sm flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                            >
+                                {deletingRoleId === role.id ? (
+                                    <>
+                                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        جاري الحذف...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                        حذف
+                                    </>
+                                )}
+                            </button>
                         </div>
                     </div>
                 ))}

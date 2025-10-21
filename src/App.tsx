@@ -6,7 +6,8 @@ import ForgetPassword from "./pages/auth/ForgetPassword";
 import Layout from "./components/Layout/Layout";
 import Roles from "./pages/roles/Roles";
 import CreateRole from "./pages/roles/CreateRole";
-
+import SystemUsers from "./pages/admin/SystemUsers";
+import AddSystemUser from "./pages/admin/AddSystemUser";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,14 @@ const router = createBrowserRouter([
       {
         path: "/roles/create",
         element: <CreateRole />,
+      },
+      {
+        path: "/admins",
+        element: <SystemUsers />,
+      },
+      {
+        path: "/admins/create",
+        element: <AddSystemUser />,
       },
     ]
   },

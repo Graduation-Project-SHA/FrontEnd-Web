@@ -6,11 +6,11 @@ const Layout = () => {
   return (
     <div className="min-h-screen  font-arabic" dir="rtl">
 
-      <div className="lg:flex ">
+      <div className="flex ">
         <Sidebar />
 
         {/* Main content area */}
-        <main className="flex-1 font-['SFArabic-Regular'] ">
+        <main className="lg:flex-1 w-full font-['SFArabic-Regular'] ">
           <div className="hidden  bg-white px-6 py-4 lg:block ">
             <h1 className="text-lg font-semibold text-right">الصفحة الرئيسية</h1>
           </div>

@@ -6,7 +6,11 @@ import { CiFileOn } from "react-icons/ci";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
-import { Link } from 'react-router-dom';
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import config from '../config';
 
 const data = [
     {
@@ -27,6 +31,11 @@ const data = [
     {
         icon: <FaUserGroup size={30} />,
         label: "المستخدمين",
+        link: "/admins"
+    },
+    {
+        icon: <MdOutlineAdminPanelSettings size={30} />,
+        label: "المستخدمين",
         link: "/roles"
     },
 
@@ -41,8 +50,30 @@ const data = [
 
 export default function Sidebar() {
     const [active, setActive] = React.useState(0);
+    const navigate = useNavigate();
 
-    const handleLogout = () => { };
+    const handleLogout = async () => {
+        const token = localStorage.getItem('accessToken');
+        try {
+            if (token) {
+                await axios.post(`${config.apiBaseUrl}/admin/auth/logout`, null, {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                });
+            }
+        } catch (err) {
+            // Optional: log error, but proceed to clear storage
+            console.error('Logout error:', err);
+        } finally {
+            // Clear auth data regardless of API response
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            // Navigate to login page
+            navigate('/login');
+        }
+    };
 
     return (
         <div className='w-[5.2rem] sticky top-0 h-screen  flex flex-col  items-center  shadow-xl '>
@@ -68,9 +99,13 @@ export default function Sidebar() {
                     }
                 </div>
                 <div className='mb-4'>
-                    <button onChange={handleLogout}>
-
-                        <CiLogout size={30} />
+                    <button
+                        onClick={handleLogout}
+                        className='flex items-center justify-center w-12 h-12 rounded-full hover:bg-gray-100 text-[#141B34]'
+                        aria-label='تسجيل الخروج'
+                        title='تسجيل الخروج'
+                    >
+                        <CiLogout size={28} />
                     </button>
                 </div>
             </div>

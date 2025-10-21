@@ -35,7 +35,11 @@ export default function Login() {
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
-      setErrors(error.response?.data.message || 'An error occurred');
+      if (axios.isAxiosError(error)) {
+        setErrors(error.response?.data.message || 'An error occurred');
+      } else {
+        setErrors('An error occurred');
+      }
       console.log(errors)
     } finally {
       setIsLoading(false);
