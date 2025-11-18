@@ -7,40 +7,50 @@ import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
-
+import { MdOutlineSick } from "react-icons/md";
+import { FaStethoscope } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../config';
 
 const data = [
     {
-        icon: <RxDashboard size={30} />,
+        icon: <RxDashboard size={25} />,
         label: "لوحة التحكم",
         link: "/"
     },
     {
-        icon: <CiFileOn size={30} />,
+        icon: <CiFileOn size={25} />,
         label: "المستندات",
         link: "/documents"
     },
     {
-        icon: <IoChatbubbleEllipsesOutline size={30} />,
+        icon: <IoChatbubbleEllipsesOutline size={25} />,
         label: "المحادثات",
         link: "/chat"
     },
     {
-        icon: <FaUserGroup size={30} />,
+        icon: <MdOutlineSick size={25} />,
+        label: "الحالات المرضية",
+        link: "/patients"
+    },
+    {
+        icon: <FaStethoscope size={25} />,
+        label: "الاطباء",
+        link: "/doctors"
+    },
+    {
+        icon: <FaUserGroup size={25} />,
         label: "المستخدمين",
         link: "/admins"
     },
     {
-        icon: <MdOutlineAdminPanelSettings size={30} />,
+        icon: <MdOutlineAdminPanelSettings size={25} />,
         label: "المستخدمين",
         link: "/roles"
     },
-
     {
-        icon: <IoSettingsOutline size={30} />,
+        icon: <IoSettingsOutline size={25} />,
         label: "الإعدادات",
         link: "/settings"
     },
@@ -69,7 +79,7 @@ export default function Sidebar() {
             // Clear auth data regardless of API response
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
+
             // Navigate to login page
             navigate('/login');
         }
@@ -83,7 +93,7 @@ export default function Sidebar() {
                     {
                         data.map((item, index) => (
                             <Link to={item.link} key={index}>
-                                <div onClick={() => setActive(index)} className={`flex justify-center items-center cursor-pointer  w-20 h-20 mt-6 rounded-2xl relative`}>
+                                <div onClick={() => setActive(index)} className={`flex justify-center items-center cursor-pointer  w-20 h-20  rounded-2xl relative`}>
                                     {active === index && (
                                         <>
                                             <img src={select} alt="ss" className="absolute -left-1 w-24 h-24 z-0 object-cover" />

@@ -8,6 +8,9 @@ import Roles from "./pages/roles/Roles";
 import CreateRole from "./pages/roles/CreateRole";
 import SystemUsers from "./pages/admin/SystemUsers";
 import AddSystemUser from "./pages/admin/AddSystemUser";
+import Patients from "./pages/patients/Patients";
+import PatientDetails from "./pages/patients/PatientDetails";
+import Doctors from "./pages/doctors/Doctors";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +37,18 @@ const router = createBrowserRouter([
         path: "/admins/create",
         element: <AddSystemUser />,
       },
+      {
+        path: "/patients",
+        element: <Patients />,
+      },
+      {
+        path: "/doctors",
+        element: <Doctors />,
+      },
+      {
+        path: "/patients/:id",
+        element: <PatientDetails />,
+      }
     ]
   },
   {

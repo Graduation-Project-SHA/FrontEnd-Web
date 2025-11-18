@@ -32,6 +32,7 @@ export default function Login() {
       });
       console.log('Login response:', response.data);
       localStorage.setItem('accessToken', response.data.tokens.accessToken);
+      localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
