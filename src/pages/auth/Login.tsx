@@ -26,13 +26,13 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${config.apiBaseUrl}/admin/auth/local-login`, {
+      const response = await axios.post(`${config.apiBaseUrl}/auth/local-login`, {
         email: data.email,
         password: data.password
       });
       console.log('Login response:', response.data);
-      localStorage.setItem('accessToken', response.data.tokens.accessToken);
-      localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+      localStorage.setItem('accessToken', response.data.data.access_token);
+      localStorage.setItem('refreshToken', response.data.data.refresh_token);
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);

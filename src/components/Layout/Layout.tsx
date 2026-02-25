@@ -26,17 +26,15 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen  font-arabic" dir="rtl">
-
-      <div className="flex ">
+    <div className="min-h-screen font-arabic" dir="rtl">
+      <div className="flex">
         <Sidebar />
-
         {/* Main content area */}
-        <main className="lg:flex-1 w-full font-['SFArabic-Regular'] ">
-          <div className="hidden  bg-white px-6 py-4 lg:block ">
+        <main className="flex-1 w-full min-w-0 font-['SFArabic-Regular'] pb-20 md:pb-0">
+          <div className="hidden bg-white px-6 py-4 md:block">
             <h1 className="text-lg font-semibold text-right">{getCurrentPageTitle()}</h1>
           </div>
-          <div className="p-4 lg:p-6">
+          <div className="p-3 md:p-4 lg:p-6">
             <Outlet />
           </div>
         </main>
