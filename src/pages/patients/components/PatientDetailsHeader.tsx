@@ -1,4 +1,3 @@
-import React from 'react'
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import { TiArrowLeft } from "react-icons/ti";
 import { Link } from 'react-router-dom';

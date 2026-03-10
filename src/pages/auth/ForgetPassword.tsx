@@ -32,9 +32,9 @@ export default function ForgetPassword() {
             });
             console.log('Login response:', response.data);
             navigate('/');
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Login error:', error);
-            setErrors(error.response?.data.message || 'An error occurred');
+            setErrors((error as { response?: { data: { message: string } } }).response?.data.message || 'An error occurred');
             console.log(errors)
         } finally {
             setIsLoading(false);

@@ -1,7 +1,3 @@
-import React from 'react'
-import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
-import { TiArrowLeft } from "react-icons/ti";
-import { Link } from 'react-router-dom';
 import PatientDetailsHeader from './components/PatientDetailsHeader';
 import PatientProfileCard from './components/PatientProfileCard';
 import Vitals from './components/Vitals';

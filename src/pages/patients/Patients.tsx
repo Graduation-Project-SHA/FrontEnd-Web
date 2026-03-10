@@ -1,4 +1,3 @@
-import React from 'react'
 import Card from '../../components/ui/Card'
 import Table from '../../components/ui/Table'
 import { useNavigate } from 'react-router-dom'
@@ -108,7 +107,7 @@ export default function Patients() {
                         },
                         {
                             label: "حذف",
-                            onClick: (row) => {
+                            onClick: (_row) => {
                                 // handle delete action
                             }
                         }
