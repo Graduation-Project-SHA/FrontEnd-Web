@@ -1,6 +1,6 @@
 import React from 'react'
 import { CiLogout } from "react-icons/ci";
-import select from '../../public/icons/select.svg'
+const select = "/icons/select.svg";
 import { RxDashboard } from "react-icons/rx";
 import { CiFileOn } from "react-icons/ci";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
