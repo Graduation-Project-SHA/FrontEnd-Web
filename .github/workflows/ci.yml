@@ -29,5 +29,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/ahmednasser04/frontend:latest
-            ghcr.io/ahmednasser04/frontend:1.${{ github.run_number }}
+            ghcr.io/graduation-project-sha/frontend:latest
+            ghcr.io/graduation-project-sha/frontend:1.${{ github.run_number }}
