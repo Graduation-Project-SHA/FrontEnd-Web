@@ -1,4 +1,4 @@
-name: Build & Push Frontend Image
+name: Build & Push & Deploy Frontend Image
 
 on:
   push:
@@ -31,3 +31,20 @@ jobs:
           tags: |
             ghcr.io/graduation-project-sha/frontend:latest
             ghcr.io/graduation-project-sha/frontend:1.${{ github.run_number }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Continuous Deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: wiqaya.duckdns.org
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/ubuntu
+            docker compose pull
+            docker compose up -d --remove-orphans
+            docker image prune -af
