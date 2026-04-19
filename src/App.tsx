@@ -5,7 +5,6 @@ import Login from "./pages/auth/Login";
 import ForgetPassword from "./pages/auth/ForgetPassword";
 import Layout from "./components/Layout/Layout";
 import Roles from "./pages/roles/Roles";
-import CreateRole from "./pages/roles/CreateRole";
 import SystemUsers from "./pages/admin/SystemUsers";
 import AddSystemUser from "./pages/admin/AddSystemUser";
 import Patients from "./pages/patients/Patients";
@@ -14,6 +13,7 @@ import Doctors from "./pages/doctors/Doctors";
 import Pharmacy from "./pages/pharmacy/Pharmacy";
 import Hospitals from "./pages/hospitals/Hospitals";
 import DoctorDetails from "./pages/doctors/DoctorDetails";
+import Donations from "./pages/donations/Donations";
 
 const router = createBrowserRouter([
   {
@@ -27,10 +27,6 @@ const router = createBrowserRouter([
       {
         path: "/roles",
         element: <Roles />,
-      },
-      {
-        path: "/roles/create",
-        element: <CreateRole />,
       },
       {
         path: "/admins",
@@ -63,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "/hospitals",
         element: <Hospitals />,
+      },
+      {
+        path: "/donations",
+        element: <Donations />,
       }
     ]
   },

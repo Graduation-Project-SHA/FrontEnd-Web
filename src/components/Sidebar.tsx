@@ -9,9 +9,9 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { MdOutlineSick } from "react-icons/md";
 import { FaStethoscope } from "react-icons/fa6";
+import { FaHandHoldingHeart } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import config from '../config';
+import axiosInstance from '../utils/axiosInstance';
 
 const data = [
     {
@@ -40,13 +40,18 @@ const data = [
         link: "/doctors"
     },
     {
+        icon: <FaHandHoldingHeart size={25} />,
+        label: "التبرعات",
+        link: "/donations"
+    },
+    {
         icon: <FaUserGroup size={25} />,
         label: "المستخدمين",
         link: "/admins"
     },
     {
         icon: <MdOutlineAdminPanelSettings size={25} />,
-        label: "المستخدمين",
+        label: "الأدوار",
         link: "/roles"
     },
     {
@@ -63,15 +68,8 @@ export default function Sidebar() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        const token = localStorage.getItem('accessToken');
         try {
-            if (token) {
-                await axios.post(`${config.apiBaseUrl}/admin/auth/logout`, null, {
-                    headers: {
-                        authorization: `Bearer ${token}`,
-                    },
-                });
-            }
+            await axiosInstance.post('/auth/logout');
         } catch (err) {
             // Optional: log error, but proceed to clear storage
             console.error('Logout error:', err);
@@ -124,7 +122,7 @@ export default function Sidebar() {
             {/* Mobile Bottom Nav */}
             <div className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg'>
                 <div className='flex items-center justify-around px-2 py-2'>
-                    {data.slice(0, 5).map((item, index) => (
+                    {data.slice(0, 6).map((item, index) => (
                         <Link to={item.link} key={index}>
                             <div
                                 onClick={() => setActive(index)}

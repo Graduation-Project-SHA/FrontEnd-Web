@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import config from '../../config'
+import axiosInstance from '../../utils/axiosInstance'
 
 interface RoleInfo {
 	name: string
@@ -49,11 +48,8 @@ export default function SystemUsers() {
 		setIsLoading(true)
 		setError(null)
 		try {
-			const response = await axios.get<PaginatedResponse>(`${config.apiBaseUrl}/admin/admins`, {
+			const response = await axiosInstance.get<PaginatedResponse>('/admin/admins', {
 				params: { page: pageNum, limit },
-				headers: {
-					authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-				},
 			})
 			const res = response.data
 			setUsers(res.data)

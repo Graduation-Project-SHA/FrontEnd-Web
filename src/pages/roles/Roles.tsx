@@ -1,194 +1,151 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import config from '../../config'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { FaUserDoctor, FaUserShield } from 'react-icons/fa6';
+import { FiUser } from 'react-icons/fi';
+import axiosInstance from '../../utils/axiosInstance';
 
-interface Permission {
-    permissionId: number
-    resource: string
-    accessLevel: number
+type RoleName = 'USER' | 'DOCTOR' | 'ADMIN';
+
+interface SystemRole {
+    name: RoleName;
+    label: string;
+    description: string;
+    count?: number;
+    color: string;
+    icon: ReactNode;
 }
 
-interface Role {
-    id: number
-    name: string
-    permissions: Permission[]
+interface PaginationMeta {
+    total?: number;
 }
+
+const staticRoles: SystemRole[] = [
+    {
+        name: 'USER',
+        label: 'المستخدم',
+        description: 'يمكنه إدارة ملفه الصحي، حجز المواعيد، وطلب التبرعات.',
+        color: 'var(--ui-color-primary)',
+        icon: <FiUser size={24} />,
+    },
+    {
+        name: 'DOCTOR',
+        label: 'الطبيب',
+        description: 'يدير المواعيد، الخدمات الطبية، ويطّلع على بيانات المرضى المصرح بها.',
+        color: 'var(--ui-color-success)',
+        icon: <FaUserDoctor size={24} />,
+    },
+    {
+        name: 'ADMIN',
+        label: 'مدير النظام',
+        description: 'يمتلك صلاحيات إشرافية كاملة على بيانات المنصة ولوحات الإدارة.',
+        color: 'var(--ui-color-purple)',
+        icon: <FaUserShield size={24} />,
+    },
+];
 
 export default function Roles() {
-    const [roles, setRoles] = useState<Role[]>([])
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const [deletingRoleId, setDeletingRoleId] = useState<number | null>(null)
-    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [userCount, setUserCount] = useState<number | undefined>(undefined);
+    const [doctorCount, setDoctorCount] = useState<number | undefined>(undefined);
 
     useEffect(() => {
-        fetchRoles()
-    }, [])
+        const fetchCounts = async () => {
+            setIsLoading(true);
+            setError(null);
 
-    const fetchRoles = async () => {
-        setIsLoading(true)
-        setError(null)
-        try {
-            const response = await axios.get(`${config.apiBaseUrl}/admin/roles`,
-                {
-                    headers: {
-                        authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                    }
-                }
-            )
-            setRoles(response.data)
-        } catch (err) {
-            console.error('Error fetching roles:', err)
-            setError('فشل في تحميل الأدوار')
-        } finally {
-            setIsLoading(false)
-        }
-    }
+            const [patientsResult, doctorsResult] = await Promise.allSettled([
+                axiosInstance.get('/admin/patients', { params: { page: 1, limit: 1 } }),
+                axiosInstance.get('/admin/doctors', { params: { page: 1, limit: 1 } }),
+            ]);
 
-    const getAccessLevelText = (level: number) => {
-        const levels: { [key: number]: string } = {
-            1: 'قراءة',
-            2: 'كتابة',
-            3: 'قراءة وكتابة',
-            4: 'حذف',
-            5: 'قراءة وحذف',
-            6: 'كتابة وحذف',
-            7: 'جميع الصلاحيات'
-        }
-        return levels[level] || `المستوى ${level}`
-    }
+            if (patientsResult.status === 'fulfilled') {
+                const pagination = patientsResult.value.data.pagination as PaginationMeta | undefined;
+                setUserCount(typeof pagination?.total === 'number' ? pagination.total : undefined);
+            }
 
-    const handleDeleteRole = async (roleId: number, roleName: string) => {
-        const confirmed = window.confirm(`هل أنت متأكد من حذف الدور "${roleName}"؟\nهذا الإجراء لا يمكن التراجع عنه.`)
+            if (doctorsResult.status === 'fulfilled') {
+                const pagination = doctorsResult.value.data.pagination as PaginationMeta | undefined;
+                setDoctorCount(typeof pagination?.total === 'number' ? pagination.total : undefined);
+            }
 
-        if (!confirmed) return
+            if (patientsResult.status === 'rejected' || doctorsResult.status === 'rejected') {
+                setError('تعذر تحميل بعض الإحصاءات، لكن الأدوار النظامية معروضة بالكامل.');
+            }
 
-        setDeletingRoleId(roleId)
-        try {
-            await axios.delete(`${config.apiBaseUrl}/admin/roles/${roleId}`, {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                }
-            })
+            setIsLoading(false);
+        };
 
-            // Remove the role from the state
-            setRoles(roles.filter(role => role.id !== roleId))
+        fetchCounts();
+    }, []);
 
-            // Optional: Show success message
-            alert('تم حذف الدور بنجاح')
-        } catch (err: any) {
-            console.error('Error deleting role:', err)
-            alert(err.response?.data?.message || 'فشل في حذف الدور')
-        } finally {
-            setDeletingRoleId(null)
-        }
-    }
+    const roles = useMemo<SystemRole[]>(() => {
+        return staticRoles.map((role) => {
+            if (role.name === 'USER') {
+                return { ...role, count: userCount };
+            }
 
-    if (isLoading) {
-        return (
-            <div className='flex justify-center items-center h-screen'>
-                <div className='flex flex-col items-center gap-4'>
-                    <svg className="animate-spin h-12 w-12 text-[#0067FF]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p className='text-gray-600'>جاري التحميل...</p>
-                </div>
-            </div>
-        )
-    }
+            if (role.name === 'DOCTOR') {
+                return { ...role, count: doctorCount };
+            }
 
-    if (error) {
-        return (
-            <div className='flex justify-center items-center h-screen'>
-                <div className='text-red-500 text-xl'>{error}</div>
-            </div>
-        )
-    }
+            return role;
+        });
+    }, [userCount, doctorCount]);
 
     return (
-        <div className='p-8 font-["SFArabic-Regular"]' dir='rtl'>
-            <div className='mb-8 flex justify-between items-center'>
-                <div>
-                    <h1 className='text-3xl font-bold text-[#0067FF] mb-2'>الأدوار والصلاحيات</h1>
-                    <p className='text-gray-600'>إدارة أدوار المستخدمين والصلاحيات</p>
+        <div className='p-4 md:p-8 font-["SFArabic-Regular"]' dir='rtl'>
+            <div className='mb-8'>
+                <h1 className='text-3xl font-bold text-primary mb-2'>الأدوار النظامية</h1>
+                <p className='text-text-secondary'>
+                    النظام يعتمد على أدوار ثابتة فقط: مستخدم، طبيب، مدير.
+                </p>
+            </div>
+
+            {error && (
+                <div className='mb-6 rounded-xl border border-warning bg-warning-bg px-4 py-3 text-sm text-[#8a5a00]'>
+                    {error}
                 </div>
-                <button
-                    onClick={() => navigate('/roles/create')}
-                    className='bg-[#0067FF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#0052CC] transition-colors flex items-center gap-2'
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                    </svg>
-                    إنشاء دور جديد
-                </button>
-            </div>
+            )}
 
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {roles.map((role) => (
-                    <div key={role.id} className='bg-white flex flex-col justify-between rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow'>
-                        <div>
-
-                            <div className='mb-4'>
-                                <h2 className='text-2xl font-bold text-[#0067FF] mb-1'>{role.name}</h2>
-                                <p className='text-sm text-gray-500'>معرف الدور: {role.id}</p>
-                            </div>
-
-                            <div>
-                                <h3 className='text-lg font-semibold mb-3 text-gray-700'>الصلاحيات:</h3>
-                                <div className='space-y-3'>
-                                    {role.permissions.map((permission) => (
-                                        <div key={permission.permissionId} className='bg-gray-50 rounded-lg p-3 border border-gray-200'>
-                                            <div className='flex justify-between items-start mb-1'>
-                                                <span className='font-semibold text-gray-800'>{permission.resource}</span>
-                                                <span className='text-xs bg-[#0067FF] text-white px-2 py-1 rounded-full'>
-                                                    {permission.accessLevel}
-                                                </span>
-                                            </div>
-                                            <p className='text-sm text-gray-600'>{getAccessLevelText(permission.accessLevel)}</p>
-                                        </div>
-                                    ))}
+            {isLoading ? (
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>
+                    {Array.from({ length: 3 }).map((_, index) => (
+                        <div key={index} className='h-52 rounded-2xl border border-border bg-surface animate-pulse' />
+                    ))}
+                </div>
+            ) : (
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                    {roles.map((role) => (
+                        <article
+                            key={role.name}
+                            className='rounded-2xl border border-border bg-surface p-6 shadow-card transition-transform duration-200 hover:-translate-y-1 hover:shadow-card-hover'
+                        >
+                            <div className='mb-5 flex items-center justify-between'>
+                                <div
+                                    className='flex h-12 w-12 items-center justify-center rounded-xl text-white'
+                                    style={{ backgroundColor: role.color }}
+                                >
+                                    {role.icon}
                                 </div>
+                                <span className='rounded-full bg-primary-bg px-3 py-1 text-xs font-semibold text-primary'>
+                                    {role.name}
+                                </span>
                             </div>
-                        </div>
 
-                        <div className='mt-4 pt-4 border-t border-gray-200 flex justify-between items-center'>
-                            <p className='text-sm text-gray-500'>
-                                عدد الصلاحيات: {role.permissions.length}
-                            </p>
-                            <button
-                                onClick={() => handleDeleteRole(role.id, role.name)}
-                                disabled={deletingRoleId === role.id}
-                                className='text-red-600 hover:text-red-800 font-semibold text-sm flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
-                            >
-                                {deletingRoleId === role.id ? (
-                                    <>
-                                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        جاري الحذف...
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                        </svg>
-                                        حذف
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                            <h2 className='mb-2 text-xl font-bold text-text-primary'>{role.label}</h2>
+                            <p className='mb-6 min-h-14 text-sm leading-7 text-text-secondary'>{role.description}</p>
 
-            {roles.length === 0 && (
-                <div className='text-center py-12'>
-                    <p className='text-gray-500 text-xl'>لا توجد أدوار متاحة</p>
+                            <div className='rounded-xl border border-border-light bg-surface-alt px-4 py-3'>
+                                <p className='text-xs text-text-muted'>عدد الحسابات</p>
+                                <p className='mt-1 text-2xl font-bold text-text-primary'>
+                                    {typeof role.count === 'number' ? role.count.toLocaleString('ar-EG') : 'غير متاح حاليا'}
+                                </p>
+                            </div>
+                        </article>
+                    ))}
                 </div>
             )}
         </div>
-    )
+    );
 }

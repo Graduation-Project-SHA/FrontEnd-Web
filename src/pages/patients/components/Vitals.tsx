@@ -50,7 +50,7 @@ export default function Vitals({ vitals }: VitalsProps) {
     return (
         <div className=''>
             <h3 className='font-bold mb-4 px-10'>العلامات الحيوية</h3>
-            <div className='flex px-10 flex-wrap gap-6  w-[70rem] shadow-lg py-5 rounded-2xl'>
+            <div className='flex w-full flex-wrap gap-6 rounded-2xl px-6 py-5 shadow-lg lg:w-[70rem]'>
                 {vitalData.map((vital, index) => (
                     <VitalCard key={index} {...vital} />
                 ))}

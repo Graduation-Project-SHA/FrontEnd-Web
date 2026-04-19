@@ -1,9 +1,8 @@
 import React from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Card from '../../components/ui/Card'
 import Table from '../../components/ui/Table'
-import config from '../../config'
+import axiosInstance from '../../utils/axiosInstance'
 
 const specializationMap: Record<string, string> = {
     ORTHOPEDICS: 'جراحة العظام',
@@ -116,10 +115,7 @@ export default function Doctors() {
     React.useEffect(() => {
         const fetchStats = async () => {
             try {
-                const token = localStorage.getItem('accessToken')
-                const response = await axios.get(`${config.apiBaseUrl}/admin/doctors/statistics`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
+                const response = await axiosInstance.get('/admin/doctors/statistics')
                 setStats(response.data.data.overview)
             } catch (err) {
                 console.error('Failed to fetch stats:', err)
@@ -132,16 +128,9 @@ export default function Doctors() {
         const fetchDoctors = async () => {
             setIsLoading(true)
             try {
-                const token = localStorage.getItem('accessToken')
                 const params: Record<string, unknown> = { page: pagination.page, limit: pagination.limit }
                 if (verifiedFilter !== undefined) params.isVerified = verifiedFilter
-                const response = await axios.get(
-                    `${config.apiBaseUrl}/admin/doctors`,
-                    {
-                        params,
-                        headers: { Authorization: `Bearer ${token}` }
-                    }
-                )
+                const response = await axiosInstance.get('/admin/doctors', { params })
                 setDoctors(response.data.data)
                 setPagination(response.data.pagination)
             } catch (err) {

@@ -8,6 +8,92 @@
 
 @import "tailwindcss";
 
+:root {
+  --ui-color-primary: #0067ff;
+  --ui-color-primary-dark: #0052cc;
+  --ui-color-primary-light: #105fe7;
+  --ui-color-primary-bg: #eef4ff;
+  --ui-color-secondary: #1b6af3;
+
+  --ui-color-success: #10b981;
+  --ui-color-success-bg: #e5f7f0;
+  --ui-color-warning: #f59e0b;
+  --ui-color-warning-bg: #fff4e5;
+  --ui-color-purple: #8b5cf6;
+  --ui-color-purple-bg: #f9e5ff;
+  --ui-color-danger: #ef4444;
+  --ui-color-danger-bg: #fef2f2;
+
+  --ui-color-text-primary: #141b34;
+  --ui-color-text-secondary: #6c7278;
+  --ui-color-text-muted: #9ca3af;
+
+  --ui-color-surface: #ffffff;
+  --ui-color-surface-alt: #f9fafb;
+  --ui-color-border: #e5e7eb;
+  --ui-color-border-light: #f3f4f6;
+
+  --ui-color-card-blue-bg: #f0f7ff;
+  --ui-color-card-blue-circle: #cde6fe;
+
+  --ui-font-family: "SFArabic-Regular", sans-serif;
+
+  --ui-shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --ui-shadow-card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+  --ui-radius-sm: 0.5rem;
+  --ui-radius-md: 0.75rem;
+  --ui-radius-lg: 1rem;
+  --ui-radius-xl: 1.5rem;
+  --ui-radius-2xl: 2rem;
+}
+
+@theme {
+  --color-primary: var(--ui-color-primary);
+  --color-primary-dark: var(--ui-color-primary-dark);
+  --color-primary-light: var(--ui-color-primary-light);
+  --color-primary-bg: var(--ui-color-primary-bg);
+  --color-secondary: var(--ui-color-secondary);
+
+  --color-success: var(--ui-color-success);
+  --color-success-bg: var(--ui-color-success-bg);
+  --color-warning: var(--ui-color-warning);
+  --color-warning-bg: var(--ui-color-warning-bg);
+  --color-purple: var(--ui-color-purple);
+  --color-purple-bg: var(--ui-color-purple-bg);
+  --color-danger: var(--ui-color-danger);
+  --color-danger-bg: var(--ui-color-danger-bg);
+
+  --color-text-primary: var(--ui-color-text-primary);
+  --color-text-secondary: var(--ui-color-text-secondary);
+  --color-text-muted: var(--ui-color-text-muted);
+
+  --color-surface: var(--ui-color-surface);
+  --color-surface-alt: var(--ui-color-surface-alt);
+  --color-border: var(--ui-color-border);
+  --color-border-light: var(--ui-color-border-light);
+
+  --color-card-blue-bg: var(--ui-color-card-blue-bg);
+  --color-card-blue-circle: var(--ui-color-card-blue-circle);
+
+  --font-arabic: var(--ui-font-family);
+
+  --shadow-card: var(--ui-shadow-card);
+  --shadow-card-hover: var(--ui-shadow-card-hover);
+
+  --radius-sm: var(--ui-radius-sm);
+  --radius-md: var(--ui-radius-md);
+  --radius-lg: var(--ui-radius-lg);
+  --radius-xl: var(--ui-radius-xl);
+  --radius-2xl: var(--ui-radius-2xl);
+}
+
+body {
+  font-family: var(--ui-font-family);
+  color: var(--ui-color-text-primary);
+  background-color: var(--ui-color-surface-alt);
+}
+
 @keyframes float {
   0%,
   100% {

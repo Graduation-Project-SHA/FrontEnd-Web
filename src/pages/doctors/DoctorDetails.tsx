@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams, Link } from 'react-router-dom'
-import axios from 'axios'
 import config from '../../config'
+import axiosInstance from '../../utils/axiosInstance'
 
 const specializationMap: Record<string, string> = {
     ORTHOPEDICS: 'جراحة العظام',
@@ -78,10 +78,7 @@ export default function DoctorDetails() {
         const fetchDoctor = async () => {
             setIsLoading(true)
             try {
-                const token = localStorage.getItem('accessToken')
-                const response = await axios.get(`${config.apiBaseUrl}/admin/doctors/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
+                const response = await axiosInstance.get(`/admin/doctors/${id}`)
                 setDoctor(response.data.data)
             } catch (err) {
                 console.error('Failed to fetch doctor:', err)
@@ -97,12 +94,7 @@ export default function DoctorDetails() {
         if (!doctor) return
         setVerifying(true)
         try {
-            const token = localStorage.getItem('accessToken')
-            await axios.patch(
-                `${config.apiBaseUrl}/admin/doctors/${id}/verify`,
-                { isVerified: !doctor.isVerified },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
+            await axiosInstance.patch(`/admin/doctors/${id}/verify`, { isVerified: !doctor.isVerified })
             setDoctor({ ...doctor, isVerified: !doctor.isVerified })
         } catch (err) {
             console.error('Failed to update verification:', err)

@@ -6,7 +6,7 @@ const pageTitle: Record<string, string> = {
   '/doctors': 'صفحة الأطباء',
   '/patients': 'صفحة المرضى',
   '/roles': 'صفحة الأدوار',
-  '/roles/create': 'إنشاء دور جديد',
+  '/donations': 'طلبات التبرع',
   '/admins': 'صفحة مستخدمي النظام',
   '/admins/create': 'إضافة مستخدم جديد',
 };
