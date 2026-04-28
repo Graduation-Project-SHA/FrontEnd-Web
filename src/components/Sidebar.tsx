@@ -20,16 +20,6 @@ const data = [
         link: "/"
     },
     {
-        icon: <CiFileOn size={25} />,
-        label: "المستندات",
-        link: "/documents"
-    },
-    {
-        icon: <IoChatbubbleEllipsesOutline size={25} />,
-        label: "المحادثات",
-        link: "/chat"
-    },
-    {
         icon: <MdOutlineSick size={25} />,
         label: "الحالات المرضية",
         link: "/patients"
@@ -45,20 +35,11 @@ const data = [
         link: "/donations"
     },
     {
-        icon: <FaUserGroup size={25} />,
-        label: "المستخدمين",
-        link: "/admins"
-    },
-    {
         icon: <MdOutlineAdminPanelSettings size={25} />,
         label: "الأدوار",
         link: "/roles"
     },
-    {
-        icon: <IoSettingsOutline size={25} />,
-        label: "الإعدادات",
-        link: "/settings"
-    },
+
 ]
 
 

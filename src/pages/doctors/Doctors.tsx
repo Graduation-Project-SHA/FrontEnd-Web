@@ -249,20 +249,6 @@ export default function Doctors() {
                                 onClick: (row) => {
                                     navigate(`/doctors/${row.userId}`)
                                 }
-                            },
-                            {
-                                label: "تعديل",
-                                onClick: (row) => {
-                                    console.log('Edit doctor:', row)
-                                },
-                                className: 'text-blue-600'
-                            },
-                            {
-                                label: "حذف",
-                                onClick: (row) => {
-                                    console.log('Delete doctor:', row)
-                                },
-                                className: 'text-red-600'
                             }
                         ]}
                     />

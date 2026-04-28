@@ -60,43 +60,62 @@ export default function Patients() {
     const [pagination, setPagination] = useState<PaginationMeta>(initialPagination);
     const [filters, setFilters] = useState({ name: '', email: '' });
     const [appliedFilters, setAppliedFilters] = useState({ name: '', email: '' });
+    const [deletingId, setDeletingId] = useState<number | null>(null);
+
+    const fetchPatients = async (page?: number) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await axiosInstance.get('/admin/patients', {
+                params: {
+                    page: page ?? pagination.page,
+                    limit: pagination.limit,
+                    name: appliedFilters.name || undefined,
+                    email: appliedFilters.email || undefined,
+                },
+            });
+
+            const patientRows = Array.isArray(response.data?.data)
+                ? (response.data.data as PatientRecord[])
+                : [];
+            const nextPagination = response.data?.pagination as PaginationMeta | undefined;
+
+            setPatients(patientRows);
+            setPagination((prev) => ({
+                ...prev,
+                page: page ?? prev.page,
+                total: nextPagination?.total ?? prev.total,
+                totalPages: Math.max(1, nextPagination?.totalPages ?? prev.totalPages),
+            }));
+        } catch (requestError) {
+            console.error('Failed to fetch patients:', requestError);
+            setError('تعذر تحميل بيانات المرضى حاليا.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchPatients = async () => {
-            setIsLoading(true);
-            setError(null);
-
-            try {
-                const response = await axiosInstance.get('/admin/patients', {
-                    params: {
-                        page: pagination.page,
-                        limit: pagination.limit,
-                        name: appliedFilters.name || undefined,
-                        email: appliedFilters.email || undefined,
-                    },
-                });
-
-                const patientRows = Array.isArray(response.data?.data)
-                    ? (response.data.data as PatientRecord[])
-                    : [];
-                const nextPagination = response.data?.pagination as PaginationMeta | undefined;
-
-                setPatients(patientRows);
-                setPagination((prev) => ({
-                    ...prev,
-                    total: nextPagination?.total ?? prev.total,
-                    totalPages: Math.max(1, nextPagination?.totalPages ?? prev.totalPages),
-                }));
-            } catch (requestError) {
-                console.error('Failed to fetch patients:', requestError);
-                setError('تعذر تحميل بيانات المرضى حاليا.');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         fetchPatients();
     }, [pagination.page, pagination.limit, appliedFilters]);
+
+    const handleDeletePatient = async (patientId: number) => {
+        setDeletingId(patientId);
+        try {
+            await axiosInstance.delete(`/admin/patients/${patientId}`);
+            setPatients((prev) => prev.filter((p) => p.id !== patientId));
+            setPagination((prev) => ({
+                ...prev,
+                total: Math.max(0, prev.total - 1),
+            }));
+        } catch (err) {
+            console.error('Failed to delete patient:', err);
+            setError('فشل حذف المريض. يرجى المحاولة لاحقا.');
+        } finally {
+            setDeletingId(null);
+        }
+    };
 
     const stats = useMemo(() => {
         const verifiedCount = patients.filter((item) => item.isEmailVerified).length;
@@ -276,6 +295,15 @@ export default function Patients() {
                                 onClick: (row) => {
                                     navigate(`/patients/${row.id}`);
                                 },
+                            },
+                            {
+                                label: 'حذف',
+                                onClick: (row) => {
+                                    if (deletingId === null) {
+                                        handleDeletePatient(row.id);
+                                    }
+                                },
+                                className: deletingId ? 'text-danger opacity-50' : 'text-danger',
                             },
                         ]}
                     />

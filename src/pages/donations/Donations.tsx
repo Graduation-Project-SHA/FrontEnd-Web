@@ -263,19 +263,6 @@ export default function Donations() {
                             { key: 'donationType', header: 'النوع' },
                             { key: 'details', header: 'فصيلة الدم / الجهاز' },
                             { key: 'location', header: 'الموقع' },
-                            {
-                                key: 'status',
-                                header: 'الحالة',
-                                render: (row) => {
-                                    const statusData = statusMap[(row.status as DonationStatus) || 'PENDING'];
-
-                                    return (
-                                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusData.className}`}>
-                                            {statusData.label}
-                                        </span>
-                                    );
-                                },
-                            },
                             { key: 'createdAt', header: 'تاريخ الإنشاء' },
                         ]}
                         data={tableRows}
@@ -301,6 +288,7 @@ export default function Donations() {
                             >
                                 التالي
                             </button>
+                            
                         </div>
                     </div>
                 </>
