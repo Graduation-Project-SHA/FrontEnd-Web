@@ -40,9 +40,11 @@ jobs:
       - name: Continuous Deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: wiqaya.duckdns.org
+          host: wiqaya-app.me
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
+          timeout: 60s
+          command_timeout: 10m
           script: |
             cd /home/ubuntu
             docker compose pull
