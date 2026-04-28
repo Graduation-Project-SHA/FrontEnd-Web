@@ -2,10 +2,6 @@ import React from 'react'
 import { CiLogout } from "react-icons/ci";
 import select from '../../public/icons/select.svg'
 import { RxDashboard } from "react-icons/rx";
-import { CiFileOn } from "react-icons/ci";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import { FaUserGroup } from "react-icons/fa6";
-import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { MdOutlineSick } from "react-icons/md";
 import { FaStethoscope } from "react-icons/fa6";

@@ -46,21 +46,6 @@ const typeTabs: Array<{ label: string; value: DonationTypeFilter }> = [
     { label: 'جهاز طبي', value: 'MEDICAL_DEVICE' },
 ];
 
-const statusMap: Record<DonationStatus, { label: string; className: string }> = {
-    PENDING: {
-        label: 'قيد المراجعة',
-        className: 'bg-warning-bg text-warning',
-    },
-    FULFILLED: {
-        label: 'تم التنفيذ',
-        className: 'bg-success-bg text-success',
-    },
-    CANCELLED: {
-        label: 'ملغي',
-        className: 'bg-danger-bg text-danger',
-    },
-};
-
 const typeLabelMap: Record<string, string> = {
     BLOOD: 'تبرع دم',
     MEDICAL_DEVICE: 'جهاز طبي',
