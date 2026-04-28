@@ -2,7 +2,7 @@
 const config = {
   apiBaseUrl:
     import.meta.env.VITE_API_BASE_URL ||
-    "http://localhost:3000",
+    "http://api.wiqaya.duckdns.org",
 } as const;
 
 export default config;
