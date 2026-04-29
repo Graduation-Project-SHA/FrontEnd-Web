@@ -7,6 +7,8 @@ import Layout from "./components/Layout/Layout";
 import Roles from "./pages/roles/Roles";
 import SystemUsers from "./pages/admin/SystemUsers";
 import AddSystemUser from "./pages/admin/AddSystemUser";
+import AdminAppointments from "./pages/admin/Appointments";
+import AppointmentDetail from "./pages/admin/AppointmentDetail";
 import Patients from "./pages/patients/Patients";
 import PatientDetails from "./pages/patients/PatientDetails";
 import Doctors from "./pages/doctors/Doctors";
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
       {
         path: "/admins/create",
         element: <AddSystemUser />,
+      },
+      {
+        path: "/admin/appointments",
+        element: <AdminAppointments />,
+      },
+      {
+        path: "/admin/appointments/:id",
+        element: <AppointmentDetail />,
       },
       {
         path: "/patients",

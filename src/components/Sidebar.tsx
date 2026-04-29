@@ -6,6 +6,7 @@ import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { MdOutlineSick } from "react-icons/md";
 import { FaStethoscope } from "react-icons/fa6";
 import { FaHandHoldingHeart } from "react-icons/fa6";
+import { BsCalendarCheck } from "react-icons/bs";
 import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance';
 
@@ -14,6 +15,11 @@ const data = [
         icon: <RxDashboard size={25} />,
         label: "لوحة التحكم",
         link: "/"
+    },
+    {
+        icon: <BsCalendarCheck size={25} />,
+        label: "المواعيد",
+        link: "/admin/appointments"
     },
     {
         icon: <MdOutlineSick size={25} />,
@@ -63,8 +69,8 @@ export default function Sidebar() {
     return (
         <>
             {/* Desktop Sidebar - side fixed */}
-            <div className='hidden md:flex w-[5.2rem] sticky top-0 h-screen flex-col items-center shadow-xl shrink-0'>
-                <p className='text-2xl my-4 font-bold text-[#0067FF]'>لوجو</p>
+            <div className='hidden md:flex w-[5.4rem] sticky top-0 h-screen flex-col items-center shadow-xl shrink-0'>
+                <p className='text-2xl my-4 font-bold text-[#0067FF]'>وقاية</p>
                 <div className='flex flex-col items-center justify-between h-full'>
                     <div className='relative'>
                         {data.map((item, index) => (
